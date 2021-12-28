@@ -301,6 +301,12 @@ class TabularCPD(DiscreteFactor):
             state_names=self.state_names.copy(),
         )
 
+    """
+    normalize HAS BEEN EDITED
+    12/7/2021 - Michael - changed line 333 to correctly normalize values
+    12/8/2021 - Michael - changed line 333, absolute val before squaring
+    """
+    
     def normalize(self, inplace=True):
         """
         Normalizes the cpd table. The method modifies each column of values such
@@ -325,7 +331,7 @@ class TabularCPD(DiscreteFactor):
         """
         tabular_cpd = self if inplace else self.copy()
         cpd = tabular_cpd.get_values()
-        tabular_cpd.values = (cpd / cpd.sum(axis=0)).reshape(tabular_cpd.cardinality)
+        tabular_cpd.values = (cpd / np.sqrt(np.square(np.absolute(cpd)).sum(axis=0))).reshape(tabular_cpd.cardinality) #absolute value, square, sum, sqrt
         if not inplace:
             return tabular_cpd
 

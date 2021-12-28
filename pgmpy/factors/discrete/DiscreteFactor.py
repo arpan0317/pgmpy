@@ -10,6 +10,8 @@ from pgmpy.factors.base import BaseFactor
 from pgmpy.utils import StateNameMixin
 from pgmpy.extern import tabulate
 
+import sys
+
 State = namedtuple("State", ["var", "state"])
 
 
@@ -84,8 +86,11 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
         """
         if isinstance(variables, str):
             raise TypeError("Variables: Expected type list or array like, got string")
-
+        """
         values = np.array(values, dtype=float)
+        """
+        
+        values = np.array(values, dtype=complex)
 
         if len(cardinality) != len(variables):
             raise ValueError(
@@ -316,6 +321,13 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
             state_names=self.state_names,
         )
 
+    """
+    marginalize HAS BEEN EDITED
+    Nov. 2021 - Arpan - (Enter Changed Made)
+    12/8/2021 - Michael - line 375, take absolute value before squaring
+    """
+    
+    
     def marginalize(self, variables, inplace=True):
         """
         Modifies the factor with marginalized values.
@@ -360,9 +372,14 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
         phi.variables = [phi.variables[index] for index in index_to_keep]
         phi.cardinality = phi.cardinality[index_to_keep]
         phi.del_state_names(variables)
+        
 
-        phi.values = np.sum(phi.values, axis=tuple(var_indexes))
+        if(sys._getframe().f_back.f_code.co_name == "is_valid_cpd"): #absolute value before squaring - complex numbers (magnitude)
+            phi.values = np.sum(np.square(np.absolute(phi.values)), axis=tuple(var_indexes)) 
+        else:
+            phi.values = np.sum(phi.values, axis=tuple(var_indexes))
 
+        
         if not inplace:
             return phi
 
@@ -422,6 +439,15 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
         if not inplace:
             return phi
 
+        """
+        normalize HAS BEEN EDITED
+        Nov. 2021 - Arpan - (Enter Changes Made)
+        12/7/2021 - Michael - Commented out lines 486-495, added line 496 for normalization?
+        12/8/2021 - Michael - line 496, square absVal of each, sum, then sqrt
+        """
+        
+        
+        
     def normalize(self, inplace=True):
         """
         Normalizes the values of factor so that they sum to 1.
@@ -462,8 +488,17 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
                 [ 0.15151515,  0.16666667]]])
         """
         phi = self if inplace else self.copy()
-
-        phi.values = phi.values / phi.values.sum()
+        absVal = np.absolute(phi.values)
+        """
+        if(absVal.all() == 0):
+            print(phi.values)
+            phi.values = phi.values
+        else:
+            phi.values = phi.values / absVal.sum()
+            print(phi.values)
+         """
+        if(absVal.all() != 0):
+            phi.values = phi.values / np.sqrt(np.square(absVal).sum()) #absolute value of each term, square, sum, sqrt
 
         if not inplace:
             return phi
@@ -870,11 +905,11 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
     def is_valid_cpd(self):
         """
         Checks if the factor's values can be used for a valid CPD.
-        """
+        """ 
         return np.allclose(
-            self.to_factor()
+            (self.to_factor()
             .marginalize(self.scope()[:1], inplace=False)
-            .values.flatten("C"),
+            .values.flatten("C")),
             np.ones(np.product(self.cardinality[:0:-1])),
             atol=0.01,
         )

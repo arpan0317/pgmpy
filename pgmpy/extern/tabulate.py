@@ -497,6 +497,11 @@ def _column_type(strings, has_invisible=True):
     types = [_type(s, has_invisible) for s in strings]
     return reduce(_more_generic, types, int)
 
+"""
+_format HAS BEEN EDITED
+12/8/2021 - Michael - changed line 529 from float to complex
+"""
+
 
 def _format(val, valtype, floatfmt, missingval=""):
     r"""Format a value accoding to its type.
@@ -521,7 +526,7 @@ def _format(val, valtype, floatfmt, missingval=""):
         except TypeError:
             return _text_type(val)
     elif valtype is float:
-        return format(float(val), floatfmt)
+        return format(complex(val), floatfmt)
     else:
         return "{0}".format(val)
 
