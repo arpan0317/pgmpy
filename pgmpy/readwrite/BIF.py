@@ -141,7 +141,7 @@ class BIFReader(object):
         # creating an expression for valid numbers, of the format
         # 1.00 or 1 or 1.00. 0.00 or 9.8e-5 etc
         num_expr = Suppress(Optional("(")) + Word(nums + "-" + "+" + "e" + "E" + "." + "j") + Suppress(Optional(")")) +                   Suppress(Optional(","))
-        #num_expr = Word(nums + "-" + "+" + "e" + "E" + "." + "j") + Suppress(Optional(","))
+        #num_expr = Word(nums + "-" + "+" + "e" + "E" + ".") + Suppress(Optional(","))
         probability_expr = (
             Suppress("probability")
             + Suppress("(")
