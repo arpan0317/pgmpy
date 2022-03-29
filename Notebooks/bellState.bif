@@ -1,0 +1,38 @@
+network unknown {
+}
+variable q0m0 {
+    type discrete [ 2 ] { 0, 1 };
+}
+variable q0m1 {
+    type discrete [ 2 ] { 0, 1 };
+}
+variable q0m2 {
+    type discrete [ 2 ] { 0, 1 };
+}
+variable q1m0 {
+    type discrete [ 2 ] { 0, 1 };
+}
+variable q1m1 {
+    type discrete [ 2 ] { 0, 1 };
+}
+variable q1m2 {
+    type discrete [ 2 ] { 0, 1 };
+}
+probability ( q0m0 ) {
+    table (1+0j), 0j ;
+}
+probability ( q0m1 | q0m0 ) {
+    table (0.7071067811865475+0j), (0.7071067811865475+0j), (0.7071067811865475+0j), (-0.7071067811865475+0j) ;
+}
+probability ( q0m2 | q0m1 ) {
+    table (1+0j), 0j, 0j, (1+0j) ;
+}
+probability ( q1m0 ) {
+    table (1+0j), 0j ;
+}
+probability ( q1m1 | q1m0 ) {
+    table (1+0j), 0j, 0j, (1+0j) ;
+}
+probability ( q1m2 | q0m1, q1m1 ) {
+    table (1+0j), 0j, 0j, (1+0j), 0j, (1+0j), (1+0j), 0j ;
+}

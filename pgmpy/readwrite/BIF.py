@@ -140,7 +140,8 @@ class BIFReader(object):
         ) + Suppress(Optional(","))
         # creating an expression for valid numbers, of the format
         # 1.00 or 1 or 1.00. 0.00 or 9.8e-5 etc
-        num_expr = Word(nums + "-" + "+" + "e" + "E" + ".") + Suppress(Optional(","))
+        num_expr = Suppress(Optional("(")) + Word(nums + "-" + "+" + "e" + "E" + "." + "j") + Suppress(Optional(")")) +                   Suppress(Optional(","))
+        #num_expr = Word(nums + "-" + "+" + "e" + "E" + "." + "j") + Suppress(Optional(","))
         probability_expr = (
             Suppress("probability")
             + Suppress("(")
@@ -274,7 +275,7 @@ class BIFReader(object):
 
         # Check if the block is a table.
         if bool(re.search(".*\\n[ ]*table .*\n.*", block)):
-            arr = np.array([float(j) for i in cpds for j in i])
+            arr = np.array([complex(j) for i in cpds for j in i])
             arr = arr.reshape(
                 (
                     len(self.variable_states[var_name]),
@@ -319,6 +320,7 @@ class BIFReader(object):
             delayed(self._get_values_from_block)(block)
             for block in self.probability_block()
         )
+        
 
         variable_cpds = {}
         for var_name, arr in cpd_values:
