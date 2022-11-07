@@ -375,7 +375,8 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
         
 
         if(sys._getframe().f_back.f_code.co_name == "is_valid_cpd"): #absolute value before squaring - complex numbers (magnitude)
-            phi.values = np.sum(np.square(np.absolute(phi.values)), axis=tuple(var_indexes)) 
+            #phi.values = np.sum(np.square(np.absolute(phi.values)), axis=tuple(var_indexes)) 
+            phi.values = np.sum(np.absolute(phi.values), axis=tuple(var_indexes))
         else:
             phi.values = np.sum(phi.values, axis=tuple(var_indexes))
 
@@ -498,7 +499,8 @@ class DiscreteFactor(BaseFactor, StateNameMixin):
             print(phi.values)
          """
         if(absVal.all() != 0):
-            phi.values = phi.values / np.sqrt(np.square(absVal).sum()) #absolute value of each term, square, sum, sqrt
+            #phi.values = phi.values / np.sqrt(np.square(absVal).sum()) #absolute value of each term, square, sum, sqrt
+            phi.values = phi.values / phi.values.sum()
 
         if not inplace:
             return phi

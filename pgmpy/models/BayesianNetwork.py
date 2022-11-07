@@ -421,7 +421,7 @@ class BayesianNetwork(DAG):
                 # Check if the values of the CPD sum to 1.
                 if not cpd.is_valid_cpd():
                     raise ValueError(
-                        f"Sum or integral of conditional probabilites for node {node} is not equal to 1."
+                        f"Sum or integral of conditional probabilites for node {node} is not equal to 1. "
                     )
 
                 if len(set(cpd.variables) - set(cpd.state_names.keys())) > 0:
